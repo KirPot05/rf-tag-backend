@@ -7,7 +7,9 @@ export default function dbConnect(){
 
         const dbUrl = process.env.MONGO_URL;
         
-        mongoose.connect(dbUrl)
+        mongoose.connect(dbUrl, {
+            dbName: "college_gate"
+        })
             .then(() => {
                 console.log("Connected to Database")})
             .catch((err)=> console.log(err));

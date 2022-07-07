@@ -22,62 +22,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.get('/', async (req, res) => {
-    try {
-
-        
-
-
-        
-
-        if (!dataChanged) {
-            const data = await Tracking.find();
-            res.json(data);
-        }
-
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ msg: err.message });
-    }
-});
 
 const incomingStream = Tracking.watch();
+incomingStream.setMaxListeners(11);
 
 io.on('connection', (socket) => {
+
     console.log("A user connected")
 
-    incomingStream.on('change', async () => {
+    incomingStream.on('change', () => {
 
-        await Tracking.find({}, (err, data) => {
+        Tracking.find({}, (err, data) => {
             if (err) throw err;
 
             console.log(data);
-            dataChanged && socket.emit('tracking', data);
+            socket.emit('tracking', data);
 
         })
     });
 
-    socket.on('disconnect', () => {
-        incomingStream.close();
 
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+        incomingStream.removeAllListeners();
     })
 
 })
 
 
+app.post("/", async (req, res) => {
+    const data = await Tracking.create(req.body);
+    res.json(data);
 
-app.post('/', async (req, res) => {
-    try {
-
-        const data = await Tracking.create(req.body);
-
-        res.status(200).json(data);
-
-    } catch (err) {
-        console.log(err);
-
-    }
 })
 
 
