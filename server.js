@@ -50,8 +50,8 @@ io.on('connection', (socket) => {
 })
 
 
-app.post("/", async (req, res) => {
-    const data = await Tracking.create(req.body);
+app.get("/api/data", async (req, res) => {
+    const data = await Tracking.find();
     res.json(data);
 
 })
