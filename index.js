@@ -7,7 +7,7 @@ import Members from "./models/members.js";
 import Tracking from "./models/tracking.js";
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 80;
 const httpInstance = createServer(app);
 const io = new Server(httpInstance, {
   cors: {
